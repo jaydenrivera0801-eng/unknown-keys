@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>thumbnail</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #111;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+    }
+    #preview {
+        position: relative;
+        width: 700px;
+        height: 350px;
+        background-size: cover;
+        background-position: center;
+        border: 2px solid #333;
+        margin-top: 20px;
+    }
+    #customText {
+        position: absolute;
+        top: 50%;
+        left: 55%;
+        transform: translate(-50%, -50%);
+        font-size: 70px;
+        font-weight: 700;
+        color: white;
+        text-shadow: 3px 3px 10px black;
+        white-space: nowrap;
+    }
+    #iconImg {
+        position: absolute;
+        width: 180px;
+        top: 50%;
+        left: 18%;
+        transform: translate(-50%, -50%);
+    }
+    input {
+        margin: 10px;
+    }
+    button {
+        margin-top: 15px;
+        padding: 10px 20px;
+        background: #444;
+        border: none;
+        color: white;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+
+<input type="text" id="textInput" value="UNKNOWN">
+<input type="file" id="iconUpload" accept="image/*">
+
+<div id="preview" style="background-image: url('https://image2url.com/r2/default/images/1772407363159-3ffc4860-f773-4e20-a9f0-081f56d4bea3.png');">
+    <img id="iconImg" src="">
+    <div id="customText">UNKNOWN</div>
+</div>
+
+<button onclick="downloadImage()">Download</button>
+
+<script>
+document.getElementById("textInput").addEventListener("input", function () {
+    document.getElementById("customText").innerText = this.value;
+});
+document.getElementById("iconUpload").addEventListener("change", function (e) {
+    let file = e.target.files[0];
+    if (!file) return;
+    let reader = new FileReader();
+    reader.onload = function (ev) {
+        document.getElementById("iconImg").src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+});
+function downloadImage() {
+    let preview = document.getElementById("preview");
+    let canvas = document.createElement("canvas");
+    canvas.width = preview.clientWidth;
+    canvas.height = preview.clientHeight;
+    let ctx = canvas.getContext("2d");
+    let bg = new Image();
+    bg.crossOrigin = "anonymous";
+    bg.src = preview.style.backgroundImage.slice(5, -2);
+    bg.onload = function () {
+        ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
+        let icon = document.getElementById("iconImg");
+        if (icon.src) {
+            let iconX = icon.offsetLeft;
+            let iconY = icon.offsetTop;
+            ctx.drawImage(icon, iconX - icon.width / 2, iconY - icon.height / 2, icon.width, icon.height);
+        }
+        ctx.font = "70px Arial Black";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.shadowColor = "black";
+        ctx.shadowBlur = 10;
+        let text = document.getElementById("customText");
+        ctx.fillText(text.innerText, text.offsetLeft, text.offsetTop);
+        let link = document.createElement("a");
+        link.download = "custom_image.png";
+        link.href = canvas.toDataURL();
+        link.click();
+    };
+}
+</script>
+
+</body>
+</html>
