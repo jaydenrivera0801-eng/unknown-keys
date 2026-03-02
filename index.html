@@ -25,6 +25,13 @@
     .textbox::placeholder{color:#999999;opacity:0.65;}
     .input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:20px;height:20px;pointer-events:none;opacity:0.7;transition:opacity 0.2s ease;}
     .textbox:focus + .input-icon{opacity:1;}
+    .suggestions{position:absolute;top:100%;left:0;right:0;margin-top:8px;background:rgba(13,17,23,0.92);backdrop-filter:blur(10px);border:1px solid rgba(13,17,23,0.92);border-radius:8px;max-height:220px;overflow-y:auto;z-index:999;box-shadow:0 8px 32px rgba(0,0,0,0.5);display:none;}
+    .suggestion{display:flex;align-items:center;padding:10px 12px;cursor:pointer;transition:all 0.2s;border:1px solid transparent;border-radius:6px;margin:4px 6px;}
+    .suggestion:hover{background:rgba(96,192,255,0.12);border-color:#60c0ff;}
+    .suggestion img{width:32px;height:32px;object-fit:cover;border-radius:4px;margin-right:12px;flex-shrink:0;}
+    .suggestion-text{font-size:0.95rem;}
+    .suggestion-text .match{color:#ffffff;font-weight:600;}
+    .suggestion-text .rest{color:#60c0ff;}
     .products-section{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:100px 20px 60px;}
     .products-title{font-size:4.5rem;font-weight:800;letter-spacing:-0.04em;line-height:1.1;margin-bottom:0.5rem;}
     .products-title .white{color:#ffffff;}
@@ -56,8 +63,9 @@
       unk<span class="highlight">nown</span> is the <span class="rotating-part" id="rotating-word">Cheapest</span>
     </div>
     <div class="input-wrapper">
-      <input type="text" class="textbox" placeholder="type any product here pls daddy" />
+      <input type="text" class="textbox" id="searchInput" placeholder="type any product here pls daddy" autocomplete="off" />
       <img src="https://img.icons8.com/?size=100&id=82712&format=png&color=FFFFFF" alt="Search" class="input-icon" />
+      <div class="suggestions" id="suggestions"></div>
     </div>
   </section>
   <section id="products" class="products-section">
@@ -78,8 +86,97 @@
       </div>
     </div>
   </section>
+
   <script>
-    const navbar=document.getElementById('navbar');window.addEventListener('scroll',()=>{if(window.scrollY>80){navbar.classList.remove('full');navbar.classList.add('scrolled');}else{navbar.classList.remove('scrolled');navbar.classList.add('full');}});const sections=document.querySelectorAll('section');const navLinks=document.querySelectorAll('.nav-btn');window.addEventListener('scroll',()=>{let current='';sections.forEach(section=>{const sectionTop=section.offsetTop-100;if(scrollY>=sectionTop){current=section.getAttribute('id');}});navLinks.forEach(link=>{link.classList.remove('active');if(link.getAttribute('href')===`#${current}`){link.classList.add('active');}});});const words=[{text:"Cheapest",whiteLetters:3},{text:"Easiest",whiteLetters:3},{text:"Fastest",whiteLetters:3}];const wordEl=document.getElementById("rotating-word");let idx=0;function rotate(){wordEl.style.opacity="0";wordEl.style.transform="translateY(-24px)";wordEl.style.filter="blur(6px)";setTimeout(()=>{idx=(idx+1)%words.length;const w=words[idx];wordEl.innerHTML=`<span style="color:#fff">${w.text.slice(0,w.whiteLetters)}</span><span style="color:#60c0ff">${w.text.slice(w.whiteLetters)}</span>`;wordEl.style.opacity="0";wordEl.style.transform="translateY(24px)";wordEl.style.filter="blur(6px)";setTimeout(()=>{wordEl.style.opacity="1";wordEl.style.transform="translateY(0)";wordEl.style.filter="blur(0)";},50);},600);}setInterval(rotate,3000);rotate();
+    const navbar=document.getElementById('navbar');window.addEventListener('scroll',()=>{if(window.scrollY>80){navbar.classList.remove('full');navbar.classList.add('scrolled');}else{navbar.classList.remove('scrolled');navbar.classList.add('full');}});const sections=document.querySelectorAll('section');const navLinks=document.querySelectorAll('.nav-btn');window.addEventListener('scroll',()=>{let current='';sections.forEach(section=>{const sectionTop=section.offsetTop-100;if(scrollY>=sectionTop){current=section.getAttribute('id');}});navLinks.forEach(link=>{link.classList.remove('active');if(link.getAttribute('href')===`#${current}`){link.classList.add('active');}});});
+
+    const words=[{text:"Cheapest",whiteLetters:3},{text:"Easiest",whiteLetters:3},{text:"Fastest",whiteLetters:3}];const wordEl=document.getElementById("rotating-word");let idx=0;function rotate(){wordEl.style.opacity="0";wordEl.style.transform="translateY(-24px)";wordEl.style.filter="blur(6px)";setTimeout(()=>{idx=(idx+1)%words.length;const w=words[idx];wordEl.innerHTML=`<span style="color:#fff">${w.text.slice(0,w.whiteLetters)}</span><span style="color:#60c0ff">${w.text.slice(w.whiteLetters)}</span>`;wordEl.style.opacity="0";wordEl.style.transform="translateY(24px)";wordEl.style.filter="blur(6px)";setTimeout(()=>{wordEl.style.opacity="1";wordEl.style.transform="translateY(0)";wordEl.style.filter="blur(0)";},50);},600);}setInterval(rotate,3000);rotate();
+
+    const products = [
+      {
+        name: "Brightside",
+        image: "https://image2url.com/r2/default/images/1772410759347-54a2814e-dc64-4c55-8bfd-24b2a95e9ebf.png",
+        link: "https://unknownkeys.mysellauth.com/product/brightside"
+      }
+    ];
+
+    const input = document.getElementById("searchInput");
+    const suggestionsBox = document.getElementById("suggestions");
+
+    function highlightMatch(text, query) {
+      if (!query) return `<span class="match">${text}</span>`;
+      const lowerText = text.toLowerCase();
+      const lowerQuery = query.toLowerCase();
+      const index = lowerText.indexOf(lowerQuery);
+      if (index === -1) return `<span class="match">${text}</span>`;
+      const before = text.slice(0, index);
+      const match = text.slice(index, index + query.length);
+      const after = text.slice(index + query.length);
+      return `${before}<span class="match">${match}</span>${after}`;
+    }
+
+    function showSuggestions(query) {
+      suggestionsBox.innerHTML = "";
+      if (!query.trim()) {
+        suggestionsBox.style.display = "none";
+        return;
+      }
+
+      const lowerQuery = query.toLowerCase();
+      const matches = products.filter(p => p.name.toLowerCase().includes(lowerQuery));
+
+      if (matches.length === 0) {
+        suggestionsBox.style.display = "none";
+        return;
+      }
+
+      matches.forEach(product => {
+        const div = document.createElement("div");
+        div.className = "suggestion";
+
+        const img = document.createElement("img");
+        img.src = product.image;
+        img.alt = product.name;
+
+        const textDiv = document.createElement("div");
+        textDiv.className = "suggestion-text";
+
+        let displayHtml;
+        const lowerName = product.name.toLowerCase();
+        if (lowerName.startsWith(lowerQuery)) {
+          const matchedPart = product.name.slice(0, query.length);
+          const restPart = product.name.slice(query.length);
+          displayHtml = `<span class="match">${matchedPart}</span><span class="rest">${restPart}</span>`;
+        } else {
+          displayHtml = highlightMatch(product.name, query);
+        }
+
+        textDiv.innerHTML = displayHtml;
+
+        div.appendChild(img);
+        div.appendChild(textDiv);
+
+        div.onclick = () => {
+          input.value = product.name;
+          suggestionsBox.style.display = "none";
+          window.open(product.link, '_blank');
+        };
+
+        suggestionsBox.appendChild(div);
+      });
+
+      suggestionsBox.style.display = "block";
+    }
+
+    input.addEventListener("input", () => {
+      showSuggestions(input.value);
+    });
+
+    document.addEventListener("click", e => {
+      if (!input.contains(e.target) && !suggestionsBox.contains(e.target)) {
+        suggestionsBox.style.display = "none";
+      }
+    });
   </script>
 </body>
 </html>
