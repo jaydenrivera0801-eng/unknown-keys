@@ -5,358 +5,81 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>unknown</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    html {
-      scroll-behavior: smooth;
-    }
-    body {
-      background: #0d1117;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      color: #ffffff;
-      overflow-x: hidden;
-      min-height: 100vh;
-    }
-    .bg {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at 50% -10%, rgba(100, 200, 255, 0.28) 0%, rgba(60, 160, 255, 0.16) 20%, rgba(40, 120, 255, 0.09) 35%, rgba(0, 0, 0, 0) 58%),
-        radial-gradient(circle at 50% 0%, rgba(80, 180, 255, 0.14) 0%, rgba(0, 0, 0, 0) 60%),
-        linear-gradient(135deg, rgb(18, 22, 35) 0%, rgb(10, 12, 22) 45%, rgb(3, 4, 10) 100%);
-      background-repeat: no-repeat;
-      background-size: cover;
-      z-index: -1;
-    }
-    .navbar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 70px;
-      background: rgba(13, 17, 23, 0.65);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(96, 192, 255, 0.10);
-      z-index: 1000;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .navbar.full { left:0; right:0; border-radius:0; box-shadow:none; }
-    .navbar.scrolled { left:5%; right:5%; top:12px; height:60px; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,0.5); background:rgba(13,17,23,0.75); }
-    .nav-links { display:flex; gap:1.2rem; }
-    .nav-btn {
-      color:#fff; font-size:1rem; font-weight:600; text-decoration:none;
-      padding:0.4rem 0.8rem; border-radius:8px; transition:color 0.3s ease;
-      cursor:pointer; background:transparent; border:none;
-    }
-    .nav-btn:hover, .nav-btn.active { color:#60c0ff; }
-
-    .hero-section {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 0 20px;
-    }
-    .hero-text {
-      font-size: 3.2rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      opacity: 0.92;
-      user-select: none;
-      margin-bottom: 1.2rem;
-    }
-    .highlight { color: #60c0ff; }
-    .rotating-part {
-      display: inline-block;
-      min-width: 160px;
-      text-align: left;
-      will-change: opacity, transform, filter;
-      transition: all 0.6s ease;
-    }
-
-    .input-wrapper {
-      position: relative;
-      width: 420px;
-      max-width: 90%;
-      margin: 0 auto;
-    }
-    .textbox {
-      width: 100%;
-      height: 42px;
-      background: rgba(30, 30, 30, 0.18);
-      border: 1px solid rgba(70, 70, 70, 0.38);
-      border-radius: 6px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
-      color: #dddddd;
-      font-size: 1.05rem;
-      font-weight: 500;
-      padding: 0 16px 0 44px;
-      line-height: 42px;
-      outline: none;
-      transition: all 0.3s ease;
-    }
-    .textbox:focus {
-      border-color: rgba(96, 192, 255, 0.35);
-      box-shadow: 0 0 16px rgba(96, 192, 255, 0.12);
-    }
-    .textbox::placeholder {
-      color: #999999;
-      opacity: 0.65;
-    }
-    .input-icon {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 20px;
-      height: 20px;
-      pointer-events: none;
-      opacity: 0.7;
-      transition: opacity 0.2s ease;
-    }
-    .textbox:focus + .input-icon { opacity: 1; }
-
-    .products-section {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 100px 20px 60px;
-    }
-    .products-title {
-      font-size: 4.5rem;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      line-height: 1.1;
-      margin-bottom: 0.5rem;
-    }
-    .products-title .white { color: #ffffff; }
-    .products-title .blue  { color: #60c0ff; }
-
-    .products-subtitle {
-      margin-top: 0.25rem;
-      font-size: 1rem;
-      color: #888888;
-      opacity: 0.9;
-      max-width: 600px;
-      line-height: 1.4;
-      margin-bottom: 3rem;
-    }
-
-    .card-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 25px;
-      justify-content: center;
-      max-width: 1100px;
-    }
-    .card {
-      width: 320px;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid #1f2228;
-      background: transparent;
-      padding-bottom: 15px;
-      transition: transform 0.2s ease, border-color 0.2s ease;
-    }
-    .card:hover {
-      transform: translateY(-8px);
-      border-color: #60c0ff;
-    }
-    .image-wrapper {
-      width: 100%;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    .image-wrapper img {
-      width: 100%;
-      height: 130px;
-      object-fit: cover;
-      border-radius: 8px;
-      background: #1a1d24;
-    }
-    .content {
-      padding: 0 20px;
-    }
-    .title {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-    .subtitle {
-      color: #9b9b9b;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-    .price {
-      color: #d5d5d5;
-      font-size: 14px;
-      margin-bottom: 12px;
-    }
-    .price b {
-      color: #60c0ff;
-    }
-
-    @media (max-width: 600px) {
-      .hero-text { font-size: 2.4rem; }
-      .rotating-part { min-width: 120px; }
-      .nav-links { gap: 1rem; }
-      .nav-btn { font-size: 0.95rem; padding: 0.35rem 0.7rem; }
-      .input-wrapper, .textbox { width: 85vw; max-width: 340px; }
-      .textbox { font-size: 0.98rem; height: 40px; line-height: 40px; padding: 0 14px 0 40px; }
-      .input-icon { width: 18px; height: 18px; left: 12px; }
-      .products-title { font-size: 3.2rem; }
-      .products-subtitle { font-size: 0.95rem; margin-top: 0.2rem; margin-bottom: 2rem; }
-      .card { width: 90vw; max-width: 320px; }
-      .image-wrapper img { height: 120px; }
-    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{background:#0d1117;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#ffffff;overflow-x:hidden;min-height:100vh;}
+    .bg{position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 50% -10%,rgba(100,200,255,0.28) 0%,rgba(60,160,255,0.16) 20%,rgba(40,120,255,0.09) 35%,rgba(0,0,0,0) 58%),radial-gradient(circle at 50% 0%,rgba(80,180,255,0.14) 0%,rgba(0,0,0,0) 60%),linear-gradient(135deg,rgb(18,22,35) 0%,rgb(10,12,22) 45%,rgb(3,4,10) 100%);background-repeat:no-repeat;background-size:cover;z-index:-1;}
+    .navbar{position:fixed;top:0;left:0;right:0;height:70px;background:rgba(13,17,23,0.65);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(96,192,255,0.10);z-index:1000;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);display:flex;align-items:center;justify-content:center;}
+    .navbar.full{left:0;right:0;border-radius:0;box-shadow:none;}
+    .navbar.scrolled{left:5%;right:5%;top:12px;height:60px;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.5);background:rgba(13,17,23,0.75);}
+    .nav-links{display:flex;gap:1.2rem;}
+    .nav-btn{color:#fff;font-size:1rem;font-weight:600;text-decoration:none;padding:0.4rem 0.8rem;border-radius:8px;transition:color 0.3s ease;cursor:pointer;background:transparent;border:none;}
+    .nav-btn:hover,.nav-btn.active{color:#60c0ff;}
+    .hero-section{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 20px;}
+    .hero-text{font-size:3.2rem;font-weight:700;letter-spacing:-0.03em;opacity:0.92;user-select:none;margin-bottom:1.2rem;}
+    .highlight{color:#60c0ff;}
+    .rotating-part{display:inline-block;min-width:160px;text-align:left;will-change:opacity,transform,filter;transition:all 0.6s ease;}
+    .input-wrapper{position:relative;width:420px;max-width:90%;margin:0 auto;}
+    .textbox{width:100%;height:42px;background:rgba(30,30,30,0.18);border:1px solid rgba(70,70,70,0.38);border-radius:6px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 4px 16px rgba(0,0,0,0.45);color:#dddddd;font-size:1.05rem;font-weight:500;padding:0 16px 0 44px;line-height:42px;outline:none;transition:all 0.3s ease;}
+    .textbox:focus{border-color:rgba(96,192,255,0.35);box-shadow:0 0 16px rgba(96,192,255,0.12);}
+    .textbox::placeholder{color:#999999;opacity:0.65;}
+    .input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:20px;height:20px;pointer-events:none;opacity:0.7;transition:opacity 0.2s ease;}
+    .textbox:focus + .input-icon{opacity:1;}
+    .products-section{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:100px 20px 60px;}
+    .products-title{font-size:4.5rem;font-weight:800;letter-spacing:-0.04em;line-height:1.1;margin-bottom:0.5rem;}
+    .products-title .white{color:#ffffff;}
+    .products-title .blue{color:#60c0ff;}
+    .products-subtitle{margin-top:0.25rem;font-size:1rem;color:#888888;opacity:0.9;max-width:600px;line-height:1.4;margin-bottom:3rem;}
+    .card-grid{display:flex;flex-wrap:wrap;gap:25px;justify-content:center;max-width:1100px;}
+    .card{width:320px;border-radius:12px;overflow:hidden;border:1px solid #1f2228;background:transparent;padding-bottom:15px;transition:transform 0.2s ease,border-color 0.2s ease;cursor:pointer;}
+    .card:hover{transform:translateY(-8px);border-color:#60c0ff;}
+    .image-wrapper{width:100%;padding:20px;box-sizing:border-box;}
+    .image-wrapper img{width:100%;height:130px;object-fit:cover;border-radius:8px;background:#1a1d24;}
+    .content{padding:0 20px;}
+    .title{font-size:20px;font-weight:bold;margin-bottom:6px;}
+    .subtitle{color:#9b9b9b;font-size:14px;margin-bottom:10px;}
+    .price{color:#d5d5d5;font-size:14px;margin-bottom:12px;}
+    .price b{color:#60c0ff;}
+    @media (max-width:600px){.hero-text{font-size:2.4rem;}.rotating-part{min-width:120px;}.nav-links{gap:1rem;}.nav-btn{font-size:0.95rem;padding:0.35rem 0.7rem;}.input-wrapper,.textbox{width:85vw;max-width:340px;}.textbox{font-size:0.98rem;height:40px;line-height:40px;padding:0 14px 0 40px;}.input-icon{width:18px;height:18px;left:12px;}.products-title{font-size:3.2rem;}.products-subtitle{font-size:0.95rem;margin-top:0.2rem;margin-bottom:2rem;}.card{width:90vw;max-width:320px;}.image-wrapper img{height:120px;}}
   </style>
 </head>
 <body>
   <div class="bg"></div>
-
   <nav class="navbar full" id="navbar">
     <div class="nav-links">
       <a href="#home" class="nav-btn active">Home</a>
       <a href="#products" class="nav-btn">Products</a>
     </div>
   </nav>
-
   <section id="home" class="hero-section">
     <div class="hero-text">
       unk<span class="highlight">nown</span> is the <span class="rotating-part" id="rotating-word">Cheapest</span>
     </div>
-
     <div class="input-wrapper">
-      <input 
-        type="text" 
-        class="textbox" 
-        placeholder="type any product here pls daddy"
-      />
-      <img 
-        src="https://img.icons8.com/?size=100&id=82712&format=png&color=FFFFFF" 
-        alt="Search" 
-        class="input-icon"
-      />
+      <input type="text" class="textbox" placeholder="type any product here pls daddy" />
+      <img src="https://img.icons8.com/?size=100&id=82712&format=png&color=FFFFFF" alt="Search" class="input-icon" />
     </div>
   </section>
-
   <section id="products" class="products-section">
     <h1 class="products-title">
       <span class="white">Pro</span><span class="blue">ducts</span>
     </h1>
-    <p class="products-subtitle">
-      Choose your product
-    </p>
-
+    <p class="products-subtitle">Choose your product</p>
     <div class="card-grid">
-      <div class="card">
+      <div class="card" onclick="window.open('https://unknownkeys.mysellauth.com/product/brightside','_blank')">
         <div class="image-wrapper">
-          <img src="https://cdn.discordapp.com/attachments/1477495458300432416/1477806679990210691/716547.webp?ex=69a61a38&is=69a4c8b8&hm=ab1cb890da1aca9c41bc33aa07896f5108565ad69548dfba674a57ed8ae1575a&" alt="unknown">
+          <img src="https://image2url.com/r2/default/images/1772410759347-54a2814e-dc64-4c55-8bfd-24b2a95e9ebf.png" alt="Brightside">
         </div>
         <div class="content">
-          <div class="title">unknown</div>
+          <div class="title">Brightside</div>
           <div class="subtitle">1 Product</div>
-          <div class="price">Price <b>$1.99</b></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="image-wrapper">
-          <img src="https://cdn.discordapp.com/attachments/1477495458300432416/1477806679990210691/716547.webp?ex=69a61a38&is=69a4c8b8&hm=ab1cb890da1aca9c41bc33aa07896f5108565ad69548dfba674a57ed8ae1575a&" alt="unknown">
-        </div>
-        <div class="content">
-          <div class="title">unknown</div>
-          <div class="subtitle">1 Product</div>
-          <div class="price">Price <b>$1.99</b></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="image-wrapper">
-          <img src="https://cdn.discordapp.com/attachments/1477495458300432416/1477806679990210691/716547.webp?ex=69a61a38&is=69a4c8b8&hm=ab1cb890da1aca9c41bc33aa07896f5108565ad69548dfba674a57ed8ae1575a&" alt="unknown">
-        </div>
-        <div class="content">
-          <div class="title">unknown</div>
-          <div class="subtitle">1 Product</div>
-          <div class="price">Price <b>$1.99</b></div>
+          <div class="price">Price <b>$5.00</b></div>
         </div>
       </div>
     </div>
   </section>
-
   <script>
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 80) {
-        navbar.classList.remove('full');
-        navbar.classList.add('scrolled');
-      } else {
-        navbar.classList.remove('scrolled');
-        navbar.classList.add('full');
-      }
-    });
-
-    const sections = document.querySelectorAll('section');
-    const navLinks = document.querySelectorAll('.nav-btn');
-
-    window.addEventListener('scroll', () => {
-      let current = '';
-      sections.forEach(section => {
-        const sectionTop = section.offsetTop - 100;
-        if (scrollY >= sectionTop) {
-          current = section.getAttribute('id');
-        }
-      });
-
-      navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === `#${current}`) {
-          link.classList.add('active');
-        }
-      });
-    });
-
-    const words = [
-      { text: "Cheapest", whiteLetters: 3 },
-      { text: "Easiest",   whiteLetters: 3 },
-      { text: "Fastest",   whiteLetters: 3 }
-    ];
-    const wordEl = document.getElementById("rotating-word");
-    let idx = 0;
-
-    function rotate() {
-      wordEl.style.opacity = "0";
-      wordEl.style.transform = "translateY(-24px)";
-      wordEl.style.filter = "blur(6px)";
-      setTimeout(() => {
-        idx = (idx + 1) % words.length;
-        const w = words[idx];
-        wordEl.innerHTML = `<span style="color:#fff">${w.text.slice(0,w.whiteLetters)}</span><span style="color:#60c0ff">${w.text.slice(w.whiteLetters)}</span>`;
-        wordEl.style.opacity = "0";
-        wordEl.style.transform = "translateY(24px)";
-        wordEl.style.filter = "blur(6px)";
-        setTimeout(() => {
-          wordEl.style.opacity = "1";
-          wordEl.style.transform = "translateY(0)";
-          wordEl.style.filter = "blur(0)";
-        }, 50);
-      }, 600);
-    }
-    setInterval(rotate, 3000);
-    rotate();
+    const navbar=document.getElementById('navbar');window.addEventListener('scroll',()=>{if(window.scrollY>80){navbar.classList.remove('full');navbar.classList.add('scrolled');}else{navbar.classList.remove('scrolled');navbar.classList.add('full');}});const sections=document.querySelectorAll('section');const navLinks=document.querySelectorAll('.nav-btn');window.addEventListener('scroll',()=>{let current='';sections.forEach(section=>{const sectionTop=section.offsetTop-100;if(scrollY>=sectionTop){current=section.getAttribute('id');}});navLinks.forEach(link=>{link.classList.remove('active');if(link.getAttribute('href')===`#${current}`){link.classList.add('active');}});});const words=[{text:"Cheapest",whiteLetters:3},{text:"Easiest",whiteLetters:3},{text:"Fastest",whiteLetters:3}];const wordEl=document.getElementById("rotating-word");let idx=0;function rotate(){wordEl.style.opacity="0";wordEl.style.transform="translateY(-24px)";wordEl.style.filter="blur(6px)";setTimeout(()=>{idx=(idx+1)%words.length;const w=words[idx];wordEl.innerHTML=`<span style="color:#fff">${w.text.slice(0,w.whiteLetters)}</span><span style="color:#60c0ff">${w.text.slice(w.whiteLetters)}</span>`;wordEl.style.opacity="0";wordEl.style.transform="translateY(24px)";wordEl.style.filter="blur(6px)";setTimeout(()=>{wordEl.style.opacity="1";wordEl.style.transform="translateY(0)";wordEl.style.filter="blur(0)";},50);},600);}setInterval(rotate,3000);rotate();
   </script>
 </body>
 </html>
